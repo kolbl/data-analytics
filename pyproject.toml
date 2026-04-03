@@ -1,0 +1,39 @@
+[project]
+name = "data-analytics"
+version = "0.1.0"
+description = "A Python Package for Data Analysis"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+authors = [
+    { name = "kolbl" }
+]
+requires-python = ">=3.13"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "black>=26.3.1",
+    "flake8>=7.3.0",
+    "isort>=8.0.1",
+    "pandas>=2.2",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "pytest>=8",
+    "pytest-xdist>=3",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.1,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.isort]
+profile = "black"
+line_length = 80
