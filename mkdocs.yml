@@ -1,8 +1,5 @@
 site_name: data-analytics
 site_description: Column-wise statistics and helpers for pandas DataFrames.
-site_url: https://kolbl.github.io/data-analytics/
-repo_url: https://github.com/kolbl/data-analytics
-repo_name: kolbl/data-analytics
 edit_uri: edit/main/docs/
 
 docs_dir: docs
