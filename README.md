@@ -5,6 +5,7 @@ Repo with workshop materials for "Ready, Set, Publish: Write Your First Python P
 ## Set Up Package Structure and python env
 
 ## Set Up UV
+curl -LsSf https://astral.sh/uv/0.11.1/install.sh | sh -s
 
 uv init --lib data-analytics --python 3.13
 

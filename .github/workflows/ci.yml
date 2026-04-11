@@ -1,7 +1,10 @@
-# Pre-commit and tests run in parallel. On pushes to main, after both succeed,
-# builds a PEP 440 dev release (<base>.dev<run_number>) and publishes with uv.
+# Pre-commit, tests, and security (pip-audit, bandit) run in parallel. On pushes
+# to main, after all succeed, builds a PEP 440 dev release (<base>.dev<run_number>)
+# and publishes with uv. MkDocs is built and deployed to GitHub Pages only after
+# publish succeeds.
 #
 # Add a PyPI API token as repository secret PYPI_API_TOKEN (Account settings → API tokens).
+# Pages: Settings → Pages → Source: GitHub Actions.
 
 name: CI
 
@@ -43,8 +46,23 @@ jobs:
       - name: Run tests in parallel
         run: uv run pytest -n auto
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --frozen --group dev
+      - name: pip audit (installed environment)
+        run: uv run pip-audit
+      - name: bandit (src/data_analytics)
+        run: uv run bandit -r src/data_analytics -f txt
+
   publish:
-    needs: [pre-commit, test]
+    needs: [pre-commit, test, security]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -68,3 +86,40 @@ jobs:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
           UV_PUBLISH_URL: https://test.pypi.org/legacy/
         run: uv publish
+
+  docs-build:
+    needs: [publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --frozen --group dev
+      - name: Build MkDocs site
+        run: uv run mkdocs build --strict
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  docs-deploy:
+    needs: [docs-build]
+    runs-on: ubuntu-latest
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
