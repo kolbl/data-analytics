@@ -7,6 +7,11 @@ import pytest
 
 from data_analytics import column_statistics
 from data_analytics.column_statistics import (
+    calculate_max_of_column,
+    calculate_min_of_column,
+    calculate_span_of_column,
+)
+from data_analytics.column_statistics import (
     column_statistics as column_statistics_direct,
 )
 
@@ -128,3 +133,57 @@ def test_mode_clear_majority():
     assert out.loc["a", "mode"] == pytest.approx(1.0)
     assert out.loc["b", "mode"] == pytest.approx(2.0)
     assert out.loc["c", "mode"] == pytest.approx(1.0)
+
+
+def test_calculate_max_of_column():
+    df = pd.DataFrame({"x": [1.0, 5.0, 3.0], "y": [-2.0, 0.0, 1.0]})
+    assert calculate_max_of_column(df, "x") == pytest.approx(5.0)
+    assert calculate_max_of_column(df, "y") == pytest.approx(1.0)
+
+
+def test_calculate_max_of_column_skips_na():
+    df = pd.DataFrame({"x": [1.0, float("nan"), 10.0]})
+    assert calculate_max_of_column(df, "x") == pytest.approx(10.0)
+
+
+def test_calculate_max_of_column_all_nan():
+    df = pd.DataFrame({"x": [float("nan"), float("nan")]})
+    assert pd.isna(calculate_max_of_column(df, "x"))
+
+
+def test_calculate_min_of_column():
+    df = pd.DataFrame({"x": [1.0, 5.0, 3.0], "y": [-2.0, 0.0, 1.0]})
+    assert calculate_min_of_column(df, "x") == pytest.approx(1.0)
+    assert calculate_min_of_column(df, "y") == pytest.approx(-2.0)
+
+
+def test_calculate_min_of_column_skips_na():
+    df = pd.DataFrame({"x": [1.0, float("nan"), 10.0]})
+    assert calculate_min_of_column(df, "x") == pytest.approx(1.0)
+
+
+def test_calculate_min_of_column_all_nan():
+    df = pd.DataFrame({"x": [float("nan"), float("nan")]})
+    assert pd.isna(calculate_min_of_column(df, "x"))
+
+
+def test_calculate_span_of_column():
+    df = pd.DataFrame({"x": [1.0, 5.0, 3.0], "y": [-2.0, 0.0, 1.0]})
+    assert calculate_span_of_column(df, "x") == pytest.approx(4.0)
+    assert calculate_span_of_column(df, "y") == pytest.approx(3.0)
+
+
+def test_calculate_span_of_column_skips_na():
+    df = pd.DataFrame({"x": [1.0, float("nan"), 10.0]})
+    assert calculate_span_of_column(df, "x") == pytest.approx(9.0)
+
+
+def test_calculate_span_of_column_single_value():
+    df = pd.DataFrame({"x": [7.0]})
+    assert calculate_span_of_column(df, "x") == pytest.approx(0.0)
+
+
+def test_calculate_span_of_column_all_nan():
+    df = pd.DataFrame({"x": [float("nan"), float("nan")]})
+    result = calculate_span_of_column(df, "x")
+    assert pd.isna(result)

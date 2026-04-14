@@ -99,7 +99,6 @@ def calculate_min_of_column(df: pd.DataFrame, column: str) -> float:
     return df[column].min()
 
 
-#  TODO: def calculate span of column
 def calculate_span_of_column(df: pd.DataFrame, column: str) -> float:
     """Calculate the span of a column in a DataFrame.
 
