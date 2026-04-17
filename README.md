@@ -1,91 +1,124 @@
 # data-analytics
-Repo with workshop materials for "Ready, Set, Publish: Write Your First Python Package"
 
+Workshop materials for **“Ready, Set, Publish: Write Your First Python Package.”** This package is published to [TestPyPI](https://test.pypi.org/) and consumed by [kolbl/streamlit-app](https://github.com/kolbl/streamlit-app), a Streamlit dashboard that uses the code from this repo.
 
-## Set Up Package Structure and python env
+---
 
-## Set Up UV
+## Development setup
+
+### UV
+
+Install uv (pinned installer example):
+
+```bash
 curl -LsSf https://astral.sh/uv/0.11.1/install.sh | sh -s
+```
 
+Scaffold the library (example from the workshop):
+
+```bash
 uv init --lib data-analytics --python 3.13
+```
 
-## Set up Python Environment
+### Environment and dependencies
 
+```bash
 uv sync
+```
 
-.venv appears!
+A `.venv` is created. In your editor, select that interpreter (or activate the venv if you prefer).
 
-Select Python Interpreter (or always activate)
+Add packages:
 
+```bash
 uv add pandas
 uv add pytest --group dev
-
 uv sync --group dev
+```
 
-# Set up testing in Cursor
+### Tests
+
+```bash
 uv run pytest -v
+```
 
+In Cursor/VS Code: open **Testing** and use “Focus on Test Explorer View” (or search for “Focus on Test View”).
 
-# Pre-commit
+### Pre-commit
+
+```bash
 pre-commit install
-(uv run pre-commit install)??
 pre-commit run --all-files
-(uv run pre-commit run --all-file)
+```
 
+If `pre-commit` is not on your PATH, use `uv run pre-commit install` and `uv run pre-commit run --all-files`.
 
+---
 
-# test
- “Testing: Focus on Test Explorer View” (or search for “Focus on Test View”).
+## Usage
 
-# Usage of package
+### Column max, min, and span
 
+`calculate_max_of_column(df, column)` is implemented as **`df[column].max()`**: pandas returns the largest value with its default **`skipna=True`**, so missing values are ignored. If every cell in the column is missing, the result is NaN.
+
+The same idea applies to **`calculate_min_of_column`** (`.min()`) and **`calculate_span_of_column`**, which is **`max − min`** on that column (again via `.max()` and `.min()`, so NaNs are skipped consistently).
+
+```python
 import pandas as pd
+from data_analytics.column_statistics import (
+    calculate_max_of_column,
+    calculate_min_of_column,
+    calculate_span_of_column,
+)
+
+df = pd.DataFrame({"x": [1.0, 5.0, 3.0, float("nan")]})
+calculate_max_of_column(df, "x")   # 5.0
+calculate_min_of_column(df, "x")   # 1.0
+calculate_span_of_column(df, "x")  # 4.0
+```
+
+### Full summary table per column
+
+For mean, median, mode, max, min, and related stats:
+
+```python
 from data_analytics import column_statistics
+
 stats = column_statistics(df)  # numeric columns only
 # stats = column_statistics(df, numeric_only=False)
+```
 
+---
 
-# Pypi Registry Test Account
-https://test.pypi.org/account/register/
+## Publishing (TestPyPI and GitHub)
 
-Kontoeinstellungen - connect to Github
+### TestPyPI account
 
-# What you need on GitHub
+- Register: [test.pypi.org/account/register/](https://test.pypi.org/account/register/)
+- In account settings, connect GitHub if you use that integration.
 
+### GitHub requirements
 
-Repository secret PYPI_API_TOKEN — PyPI → Account → API tokens (classic) with Upload scope for this project, or a project-scoped token.
-Project on PyPI whose name matches the package you upload (here the distribution is data-analytics / data_analytics).
-If PYPI_API_TOKEN is missing, the publish step will fail on auth until you add it.
+- **Secret `PYPI_API_TOKEN`**: PyPI → Account → API tokens (classic) with upload scope for this project, or a project-scoped token.
+- **Project on PyPI** whose name matches what you upload (here the distribution is `data-analytics` / import name `data_analytics`).
 
-Trusted publishing (no token): PyPI can be set up for OIDC from GitHub; then you can switch the last step to something like uv publish --trusted-publishing always and grant id-token: write in the publish job. The workflow is intentionally token-based so it works without extra PyPI UI setup.
+If `PYPI_API_TOKEN` is missing, the publish step fails until you add it.
 
-Note: Every push to main that passes CI will try to upload a new dev version (0.1.0.dev1, 0.1.0.dev2, …). PyPI does not allow reusing the same version.
+**Trusted publishing (no token):** PyPI can use OIDC from GitHub; then you can use something like `uv publish --trusted-publishing always` and grant `id-token: write` in the publish job. This repo’s workflow may be token-based so it works without extra PyPI UI setup.
 
+**Versioning:** Every push to `main` that passes CI may upload a new dev version (`0.1.0.dev1`, `0.1.0.dev2`, …). PyPI does not allow reusing the same version.
 
+---
 
-## Github Page
-I'll analyze the failing job for you. Let me start by retrieving the job logs.The job is failing with a **404 Not Found error** while trying to create a GitHub Pages deployment. The error indicates that GitHub Pages has not been properly configured for your repository.
+## GitHub Pages (MkDocs)
 
-## Root Cause
-The `actions/deploy-pages@v4` action is unable to create a deployment because:
-1. GitHub Pages may not be enabled on your repository
-2. The deployment environment may not be properly configured
+Enable Pages on the repository:
 
-## Solution
+1. **Repository settings:** [github.com/kolbl/data-analytics/settings/pages](https://github.com/kolbl/data-analytics/settings/pages)
+2. **Build and deployment → Source:** choose a branch (often `main` or `gh-pages`) and a source (recommended: **GitHub Actions**).
+3. **Workflow permissions:** **Settings** → **Code and automation** → **Actions** → **General** → under “Workflow permissions”, ensure `GITHUB_TOKEN` can read/write as needed and that Actions may create/approve PRs if your workflow requires it.
+4. **Workflow `permissions` block** should include at least:
 
-You need to enable GitHub Pages on your repository:
-
-1. **Go to your repository settings**: https://github.com/kolbl/data-analytics/settings/pages
-2. **Configure GitHub Pages**:
-   - Under "Build and deployment" → "Source", select a branch to deploy from (typically `main` or `gh-pages`)
-   - Choose a deployment source (recommended: "GitHub Actions")
-3. **Ensure the workflow has proper permissions**:
-   - Go to **Settings** → **Code and automation** → **Actions** → **General**
-   - Under "Workflow permissions", ensure `GITHUB_TOKEN` has:
-     - ✅ Read and write permissions
-     - ✅ Allow GitHub Actions to create and approve pull requests
-
-4. **Verify your workflow file** includes the required permissions:
    ```yaml
    permissions:
      contents: read
@@ -93,7 +126,8 @@ You need to enable GitHub Pages on your repository:
      id-token: write
    ```
 
-5. **Verify the `environment` is set correctly** in your deploy step:
+5. **Deploy step** should use the Pages environment correctly, for example:
+
    ```yaml
    - name: Deploy to GitHub Pages
      uses: actions/deploy-pages@v4
@@ -101,15 +135,4 @@ You need to enable GitHub Pages on your repository:
        environment-url: ${{ steps.deployment.outputs.page_url }}
    ```
 
-Once GitHub Pages is enabled with proper permissions, your workflow should be able to successfully create deployments.
-
-# what is py.typed?
-
-
-What it is: Usually an empty file named py.typed inside an installable package (e.g. next to your package code under src/data_analytics/).
-What it signals: “This package is meant to be checked with its inline type hints (def foo(x: int) -> str, etc.).” Tools like mypy, pyright, and PyCharm then treat those annotations as authoritative for that package.
-Without it: Many checkers still ignore your package’s annotations and treat it as untyped (or only use stubs if you ship separate .pyi files).
-So it doesn’t change runtime behavior; it tells type checkers and IDEs that your package participates in the typed-ecosystem convention.
-
-
-# Python vs Python3
+After Pages is enabled and permissions match your workflow, deployments should succeed.
