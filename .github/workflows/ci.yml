@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen --group dev
       - name: pip audit (installed environment)
-        run: uv run pip-audit
+        run: uv run pip-audit --skip-editable
       - name: bandit (src/data_analytics)
         run: uv run bandit -r src/data_analytics -f txt
 
