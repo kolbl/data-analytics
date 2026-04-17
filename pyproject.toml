@@ -27,7 +27,7 @@ dev = [
     "mkdocstrings[python]>=0.26",
     "pip-audit>=2.7",
     "pre-commit>=4.5.1",
-    "pytest>=8",
+    "pytest>=9.0.3",
     "pytest-xdist>=3",
 ]
 app = []
