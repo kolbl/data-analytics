@@ -1,11 +1,9 @@
 """Column-wise descriptive statistics for pandas DataFrames."""
 
-from __future__ import annotations
-
 import pandas as pd
 
 
-def column_statistics(
+def calculate_column_statistics(
     df: pd.DataFrame,
     *,
     numeric_only: bool = True,
