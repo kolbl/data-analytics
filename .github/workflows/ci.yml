@@ -43,6 +43,8 @@ jobs:
           enable-cache: true
       - name: Install dependencies
         run: uv sync --frozen --group dev
+      - name: Install pytest-xdist
+        run: uv add pytest-xdist --group dev
       - name: Run tests in parallel
         run: uv run pytest -n auto
 
@@ -55,7 +57,11 @@ jobs:
           python-version: "3.13"
           enable-cache: true
       - name: Install dependencies
-        run: uv sync --frozen --group dev
+        run: uv sync --frozen --no-dev
+      - name: Install pip-audit
+        run: uv pip install pip-audit
+      - name: Install bandit
+        run: uv pip install bandit
       - name: pip audit (installed environment)
         run: uv run pip-audit --skip-editable
       - name: bandit (src/data_analytics)
@@ -102,6 +108,12 @@ jobs:
           enable-cache: true
       - name: Install dependencies
         run: uv sync --frozen --group dev
+      - name: Install MkDocs
+        run: uv add mkdocs --group dev
+      - name: Install MkDocs Material
+        run: uv add mkdocs-material --group dev
+      - name: Install mkdocstrings
+        run: uv add mkdocstrings[python] --group dev
       - name: Build MkDocs site
         run: uv run mkdocs build --strict
       - uses: actions/upload-pages-artifact@v3

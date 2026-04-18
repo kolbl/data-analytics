@@ -1,30 +1,28 @@
 # data-analytics
 
-Small utilities for exploratory work with **pandas**, starting with column-wise descriptive statistics.
+Small utilities for exploratory work with **pandas** (descriptive statistics).
 
 ## Install
 
 ```bash
-uv add data-analytics
+uv add "data-analytics==0.1.0.dev5" --extra-index-url https://test.pypi.org/simple/  --index-strategy unsafe-best-match
+
 ```
 
-Or from a clone of this repository:
-
-```bash
-uv sync --group dev
-```
 
 ## Quick example
 
+
+
+
 ```python
 import pandas as pd
-from data_analytics import column_statistics
+from data_analytics.column_statistics import calculate_min_of_column
 
 df = pd.DataFrame({"a": [1.0, 2.0, 3.0], "b": [4.0, 5.0, 6.0]})
-stats = column_statistics(df)
+min_a = calculate_min_of_column(df, "a")  # 1.0
 ```
 
-The returned frame is indexed by **column name**; each row summarizes that column across all rows.
 
 ## Documentation
 
