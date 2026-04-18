@@ -26,6 +26,6 @@
       }
     }
   },
-  "postCreateCommand": "uv sync --group dev",
+  "postCreateCommand": "uv sync --group dev && uv run pre-commit install",
   "remoteUser": "vscode"
 }
