@@ -10,17 +10,18 @@ repos:
       - id: check-added-large-files
       - id: debug-statements
 
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length", "80"]
+
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 24.1.1
     hooks:
       - id: black
         language_version: python3.13
         args: ["--line-length=80"]
-
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
