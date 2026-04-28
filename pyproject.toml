@@ -15,6 +15,7 @@ classifiers = [
 ]
 dependencies = [
     "pandas>=2.2",
+    "pip==26.1",
 ]
 
 [dependency-groups]
