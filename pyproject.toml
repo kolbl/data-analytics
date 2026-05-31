@@ -30,6 +30,7 @@ dev = [
     "pre-commit>=4.5.1",
     "pytest>=9.0.3",
     "pytest-xdist>=3",
+    "mkdocs>=1.6.1",
 ]
 app = []
 
