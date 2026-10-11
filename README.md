@@ -1,10 +1,52 @@
 # data-analytics
 
-Workshop materials for **“Ready, Set, Publish: Write Your First Python Package.”** This package is published to [TestPyPI](https://test.pypi.org/) and consumed by [kolbl/streamlit-app](https://github.com/kolbl/streamlit-app), a Streamlit dashboard that uses the code from this repo.
+Workshop materials for **“Ready, Set, Publish: Write Your First Python Package.”** You publish this package to a [pypiserver](https://pypi.org/project/pypiserver/) index on your laptop, then install it from another project. [kolbl/streamlit-app](https://github.com/kolbl/streamlit-app) is a Streamlit dashboard that uses the code from this repo.
 
 ---
 
 ## Development setup
+
+### Docker (dev container)
+
+Cursor and VS Code build `.devcontainer/` with Docker Engine on the host. Install Engine from Docker’s apt repository on Ubuntu 22.04, 24.04, or 26.04:
+
+```bash
+sudo apt update
+sudo apt install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo docker run hello-world
+```
+
+To run `docker` without `sudo`, add your user to the `docker` group and open a new terminal:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+On Ubuntu in WSL2, systemd has to be running before Engine can start. In `/etc/wsl.conf`:
+
+```ini
+[boot]
+systemd=true
+```
+
+Run `wsl --shutdown`, open Ubuntu again, then install Engine.
+
+In VS Code or Cursor, install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`). Open this folder, then from the Command Palette run **Dev Containers: Reopen in Container**.
 
 ### UV
 
@@ -12,6 +54,7 @@ Install uv (pinned installer example):
 
 ```bash
 curl -LsSf https://astral.sh/uv/0.11.1/install.sh | sh -s
+uv --version
 ```
 
 #### Windows installers
@@ -33,7 +76,6 @@ Close all terminals, open a new one, then verify:
 ```powershell
 uv --version
 ```
-
 
 ### Environment and dependencies
 
@@ -94,21 +136,36 @@ calculate_span_of_column(df, "x")  # 4.0
 
 ---
 
-## Publishing (TestPyPI and GitHub)
+## Publish to a local index
 
-### TestPyPI account
+The index is [pypiserver](https://pypi.org/project/pypiserver/). It serves a folder of wheels on this laptop.
 
-- Register: [test.pypi.org/account/register/](https://test.pypi.org/account/register/)
-- In account settings, connect GitHub if you use that integration.
+### 1. Start the index
 
-### GitHub requirements
+Leave this terminal running. The dev container already has `pypi-server`, so you can skip the install there. `-a . -P .` turns authentication off. The server listens on localhost only.
 
-- **Secret `PYPI_API_TOKEN`**: PyPI → Account → API tokens (classic) with upload scope for this project, or a project-scoped token.
-- **Project on PyPI** whose name matches what you upload (here the distribution is `data-analytics` / import name `data_analytics`).
+```bash
+uv tool install "pypiserver"
+mkdir packages
+pypi-server run -i localhost -p 8080 -a . -P . packages
+```
 
-If `PYPI_API_TOKEN` is missing, the publish step fails until you add it.
+### 2. Build and publish
 
-**Versioning:** Every push to `main` that passes CI may upload a new dev version (`0.1.0.dev1`, `0.1.0.dev2`, …). PyPI does not allow reusing the same version.
+In another terminal:
+
+```bash
+uv build
+uv publish --index local
+```
+
+`dist/` now has a wheel and a source archive. http://localhost:8080/packages/ lists both files for `data-analytics` 0.1.0. Publishing the same files again skips them.
+
+### 3. Install it from somewhere else
+
+```bash
+uv add data-analytics --index http://localhost:8080/simple/
+```
 
 ---
 
