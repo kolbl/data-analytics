@@ -7,7 +7,7 @@ Small utilities for exploratory work with **pandas** (descriptive statistics).
 After you publish to the local index (see the repository README):
 
 ```bash
-uv add data-analytics --index http://127.0.0.1:8080/simple/
+uv add data-analytics --index http://localhost:8080/simple/
 ```
 
 
