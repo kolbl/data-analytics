@@ -29,7 +29,7 @@ uv self update
 Specific version:
 
 ```bash
-uv self update 0.11.6
+uv self update 0.13.0
 ```
 
 ## Python interpreters
@@ -141,6 +141,13 @@ Refresh / write `uv.lock` after dependency changes (often `uv add` / `uv sync` a
 uv lock
 ```
 
+Upgrade every dependency to the newest version allowed by `pyproject.toml`, then install that lockfile into the project environment:
+
+```bash
+uv lock --upgrade
+uv sync
+```
+
 Dependency tree:
 
 ```bash
@@ -155,11 +162,15 @@ Build sdist/wheel:
 uv build
 ```
 
-Publish to a package index (configure credentials / index URL per [uv publishing docs](https://docs.astral.sh/uv/guides/publishing/)):
+This repo publishes to a local [pypiserver](https://pypi.org/project/pypiserver/) index named `local` (see `README.md`). With that server running:
 
 ```bash
-uv publish
+export UV_PUBLISH_USERNAME=attendee
+export UV_PUBLISH_PASSWORD=workshop
+uv publish --index local
 ```
+
+Publishing to PyPI later uses `uv publish` with a token. Remove the `[[tool.uv.index]]` block first. Details are in the [uv publishing docs](https://docs.astral.sh/uv/guides/publishing/).
 
 ## One-off tools: `uvx`
 

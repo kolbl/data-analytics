@@ -4,9 +4,10 @@ Small utilities for exploratory work with **pandas** (descriptive statistics).
 
 ## Install
 
-```bash
-uv add "data-analytics==0.1.0.dev5" --extra-index-url https://test.pypi.org/simple/  --index-strategy unsafe-best-match
+After you publish to the local index (see the repository README):
 
+```bash
+uv add data-analytics --index http://127.0.0.1:8080/simple/
 ```
 
 
