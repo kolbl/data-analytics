@@ -145,7 +145,7 @@ The index is [pypiserver](https://pypi.org/project/pypiserver/). It serves a fol
 Leave this terminal running. The dev container already has `pypi-server`, so you can skip the install there. `-a . -P .` turns authentication off. The server listens on localhost only.
 
 ```bash
-uv tool install "pypiserver"
+uv tool install pypiserver
 mkdir packages
 pypi-server run -i localhost -p 8080 -a . -P . packages
 ```
@@ -156,7 +156,7 @@ In another terminal:
 
 ```bash
 uv build
-uv publish --index local
+uv publish --publish-url http://localhost:8080
 ```
 
 `dist/` now has a wheel and a source archive. http://localhost:8080/packages/ lists both files for `data-analytics` 0.1.0. Publishing the same files again skips them.

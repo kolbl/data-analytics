@@ -90,7 +90,7 @@ jobs:
         env:
           UV_PUBLISH_USERNAME: attendee
           UV_PUBLISH_PASSWORD: workshop
-        run: uv publish --index local
+        run: uv publish --publish-url http://localhost:8080
       - name: Install from the local index
         run: |
           mkdir -p "$RUNNER_TEMP/use-data-analytics"

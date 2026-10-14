@@ -162,15 +162,9 @@ Build sdist/wheel:
 uv build
 ```
 
-This repo publishes to a local [pypiserver](https://pypi.org/project/pypiserver/) index named `local` (see `README.md`). With that server running:
-
 ```bash
-export UV_PUBLISH_USERNAME=attendee
-export UV_PUBLISH_PASSWORD=workshop
-uv publish --index local
+uv publish
 ```
-
-Publishing to PyPI later uses `uv publish` with a token. Remove the `[[tool.uv.index]]` block first. Details are in the [uv publishing docs](https://docs.astral.sh/uv/guides/publishing/).
 
 ## One-off tools: `uvx`
 
