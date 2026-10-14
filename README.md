@@ -53,7 +53,7 @@ In VS Code or Cursor, install the **Dev Containers** extension (`ms-vscode-remot
 Install uv (pinned installer example):
 
 ```bash
-curl -LsSf https://astral.sh/uv/0.11.1/install.sh | sh -s
+curl -LsSf https://astral.sh/uv/0.13.0/install.sh | sh -s
 uv --version
 ```
 
@@ -159,7 +159,7 @@ uv build
 uv publish --publish-url http://localhost:8080
 ```
 
-`dist/` now has a wheel and a source archive. http://localhost:8080/packages/ lists both files for `data-analytics` 0.1.0. Publishing the same files again skips them.
+`dist/` now has a wheel and a source archive. http://localhost:8080/packages/ lists both files for `data-analytics` 0.2.0. Publishing the same files again skips them.
 
 ### 3. Install it from somewhere else
 
