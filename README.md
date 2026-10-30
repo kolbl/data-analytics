@@ -110,6 +110,27 @@ pre-commit run --all-files
 
 If `pre-commit` is not on your PATH, use `uv run pre-commit install` and `uv run pre-commit run --all-files`.
 
+### Security
+
+`pip-audit` and Bandit are in the `dev` group:
+
+```bash
+uv add --group dev pip-audit bandit
+uv sync --group dev
+```
+
+Check installed packages for known vulnerabilities:
+
+```bash
+uv run pip-audit
+```
+
+Scan the package source. `-r` walks the directory; without it Bandit skips the folder and reports zero lines of code. `-f txt` prints a text report.
+
+```bash
+uv run bandit -r src/data_analytics/ -f txt
+```
+
 ---
 
 ## Usage
