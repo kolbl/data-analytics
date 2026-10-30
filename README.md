@@ -8,7 +8,7 @@ Workshop materials for **“Ready, Set, Publish: Write Your First Python Package
 
 ### Docker (dev container)
 
-Cursor and VS Code build `.devcontainer/` with Docker Engine on the host. Install Engine from Docker’s apt repository on Ubuntu 22.04, 24.04, or 26.04:
+Cursor and VS Code build `.devcontainer/` with Docker Engine on the host. Install Engine from Docker’s apt repository on Ubuntu:
 
 ```bash
 sudo apt update
@@ -37,14 +37,7 @@ To run `docker` without `sudo`, add your user to the `docker` group and open a n
 sudo usermod -aG docker $USER
 ```
 
-On Ubuntu in WSL2, systemd has to be running before Engine can start. In `/etc/wsl.conf`:
 
-```ini
-[boot]
-systemd=true
-```
-
-Run `wsl --shutdown`, open Ubuntu again, then install Engine.
 
 In VS Code or Cursor, install the **Dev Containers** extension (`ms-vscode-remote.remote-containers`). Open this folder, then from the Command Palette run **Dev Containers: Reopen in Container**.
 
