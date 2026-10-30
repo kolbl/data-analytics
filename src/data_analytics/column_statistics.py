@@ -108,3 +108,19 @@ def calculate_span_of_column(df: pd.DataFrame, column: str) -> float:
         Span of the column.
     """
     return df[column].max() - df[column].min()
+
+
+# def calculate_from_expression(expression: str) -> float:
+#     """Turn an expression string into a number.
+#     Bandit flags this on purpose (B307).
+
+#     THIS IS A DANGEROUS FUNCTION. DO NOT USE IT.
+#     IT IS FOR DEMONSTRATION PURPOSES ONLY.
+
+#     Args:
+#         expression: Expression string.
+
+#     Returns:
+#         Result of the expression.
+#     """
+#     return eval(expression)
